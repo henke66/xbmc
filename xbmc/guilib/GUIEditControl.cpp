@@ -214,6 +214,8 @@ bool CGUIEditControl::OnAction(const CAction &action)
       }
     default:
       {
+        if (m_inputType == INPUT_TYPE_PASSWORD_NUMBER_VERIFY_NEW)
+          return false;
         ClearMD5();
         m_text2.insert(m_text2.begin() + m_cursorPos++, (WCHAR)action.GetUnicode());
         break;
@@ -224,6 +226,8 @@ bool CGUIEditControl::OnAction(const CAction &action)
   }
   else if (action.GetID() >= REMOTE_0 && action.GetID() <= REMOTE_9)
   { // input from the remote
+    if (m_inputType == INPUT_TYPE_PASSWORD_NUMBER_VERIFY_NEW)
+      return false;
     ClearMD5();
     if (m_inputType == INPUT_TYPE_FILTER)
     { // filtering - use single number presses
@@ -256,6 +260,20 @@ void CGUIEditControl::OnClick()
     case INPUT_TYPE_SECONDS:
       textChanged = CGUIDialogNumeric::ShowAndGetSeconds(utf8, g_localizeStrings.Get(21420));
       break;
+    case INPUT_TYPE_TIME:
+    {
+      CDateTime dateTime;
+      dateTime.SetFromDBTime(utf8);
+      SYSTEMTIME time;
+      dateTime.GetAsSystemTime(time);
+      if (CGUIDialogNumeric::ShowAndGetTime(time, heading > 0 ? heading : g_localizeStrings.Get(21420)))
+      {
+        dateTime = CDateTime(time);
+        utf8 = dateTime.GetAsLocalizedTime("", false);
+        textChanged = true;
+      }
+      break;
+    }
     case INPUT_TYPE_DATE:
     {
       CDateTime dateTime;
@@ -264,7 +282,7 @@ void CGUIEditControl::OnClick()
         dateTime = CDateTime(2000, 1, 1, 0, 0, 0);
       SYSTEMTIME date;
       dateTime.GetAsSystemTime(date);
-      if (CGUIDialogNumeric::ShowAndGetDate(date, g_localizeStrings.Get(21420)))
+      if (CGUIDialogNumeric::ShowAndGetDate(date, heading > 0 ? heading : g_localizeStrings.Get(21420)))
       {
         dateTime = CDateTime(date);
         utf8 = dateTime.GetAsDBDate();
@@ -280,6 +298,9 @@ void CGUIEditControl::OnClick()
       break;
     case INPUT_TYPE_FILTER:
       textChanged = CGUIDialogKeyboard::ShowAndGetFilter(utf8, false);
+      break;
+    case INPUT_TYPE_PASSWORD_NUMBER_VERIFY_NEW:
+      textChanged = CGUIDialogNumeric::ShowAndVerifyNewPassword(utf8);
       break;
     case INPUT_TYPE_PASSWORD_MD5:
       utf8 = ""; // TODO: Ideally we'd send this to the keyboard and tell the keyboard we have this type of input
@@ -434,7 +455,7 @@ void CGUIEditControl::SetHint(const CGUIInfoLabel& hint)
 
 CStdStringW CGUIEditControl::GetDisplayedText() const
 {
-  if (m_inputType == INPUT_TYPE_PASSWORD || m_inputType == INPUT_TYPE_PASSWORD_MD5)
+  if (m_inputType == INPUT_TYPE_PASSWORD || m_inputType == INPUT_TYPE_PASSWORD_MD5 || m_inputType == INPUT_TYPE_PASSWORD_NUMBER_VERIFY_NEW)
   {
     CStdStringW text;
     text.append(m_text2.size(), L'*');
@@ -461,7 +482,7 @@ void CGUIEditControl::SetLabel2(const std::string &text)
   g_charsetConverter.utf8ToW(text, newText);
   if (newText != m_text2)
   {
-    m_isMD5 = m_inputType == INPUT_TYPE_PASSWORD_MD5;
+    m_isMD5 = (m_inputType == INPUT_TYPE_PASSWORD_MD5 || m_inputType == INPUT_TYPE_PASSWORD_NUMBER_VERIFY_NEW);
     m_text2 = newText;
     m_cursorPos = m_text2.size();
     SetInvalid();
@@ -479,12 +500,13 @@ CStdString CGUIEditControl::GetLabel2() const
 
 bool CGUIEditControl::ClearMD5()
 {
-  if (m_inputType != INPUT_TYPE_PASSWORD_MD5 || !m_isMD5)
+  if (!(m_inputType == INPUT_TYPE_PASSWORD_MD5 || m_inputType == INPUT_TYPE_PASSWORD_NUMBER_VERIFY_NEW) || !m_isMD5)
     return false;
   
   m_text2.Empty();
   m_cursorPos = 0;
-  m_isMD5 = false;
+  if (m_inputType != INPUT_TYPE_PASSWORD_NUMBER_VERIFY_NEW)
+    m_isMD5 = false;
   return true;
 }
 

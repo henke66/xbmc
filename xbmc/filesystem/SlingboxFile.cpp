@@ -193,7 +193,7 @@ bool CSlingboxFile::SkipNext()
   return m_pSlingbox->IsConnected();
 }
 
-bool CSlingboxFile::NextChannel()
+bool CSlingboxFile::NextChannel(bool bPreview /* = false */)
 {
   // Prepare variables
   bool bSuccess = true;
@@ -279,7 +279,7 @@ bool CSlingboxFile::NextChannel()
   return bSuccess;
 }
 
-bool CSlingboxFile::PrevChannel()
+bool CSlingboxFile::PrevChannel(bool bPreview /* = false */)
 {
   // Prepare variables
   bool bSuccess = true;

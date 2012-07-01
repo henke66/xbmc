@@ -35,6 +35,7 @@ SRCS=AlarmClock.cpp \
      LCDFactory.cpp \
      log.cpp \
      md5.cpp \
+     Observer.cpp \
      Mime.cpp \
      PerformanceSample.cpp \
      PerformanceStats.cpp \
@@ -53,6 +54,7 @@ SRCS=AlarmClock.cpp \
      StreamUtils.cpp \
      StringUtils.cpp \
      SystemInfo.cpp \
+     TextSearch.cpp \
      TimeSmoother.cpp \
      TimeUtils.cpp \
      TuxBoxUtil.cpp \

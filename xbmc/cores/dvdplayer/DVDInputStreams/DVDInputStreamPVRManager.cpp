@@ -68,8 +68,6 @@ bool CDVDInputStreamPVRManager::Open(const char* strFile, const std::string& con
    * IRecordable
    */
   m_pFile       = new CPVRFile();
-  m_pLiveTV     = ((CPVRFile*)m_pFile)->GetLiveTV();
-  m_pRecordable = ((CPVRFile*)m_pFile)->GetRecordable();
 
   CURL url(strFile);
   if (!CDVDInputStream::Open(strFile, content)) return false;
@@ -80,6 +78,9 @@ bool CDVDInputStreamPVRManager::Open(const char* strFile, const std::string& con
     return false;
   }
   m_eof = false;
+
+  m_pLiveTV     = ((CPVRFile*)m_pFile)->GetLiveTV();
+  m_pRecordable = ((CPVRFile*)m_pFile)->GetRecordable();
 
   /*
    * Translate the "pvr://....." entry.

@@ -20,6 +20,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -46,19 +47,16 @@
     <PostBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</PostBuildEventUseInBuild>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\..\addons\pvr.team-mediaportal.tvserver\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LinkIncremental>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">XBMC_MPTV_win32</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.pvr</TargetExt>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">XBMC_MPTV_win32</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.pvr</TargetExt>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\xbmc\;$(SolutionDir)\..\..\lib\;$(IncludePath);..\..\</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\..\xbmc\;$(SolutionDir)\..\..\lib\;$(IncludePath);..\..\</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\..\addons\library.xbmc.addon;..\..\..\..\..\addons\library.xbmc.pvr;..\..\..\..\addons\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;_DEBUG;_WINDOWS;MPTV_EXPORTS;TARGET_WINDOWS;_WINSOCKAPI_;_USE_32BIT_TIME_T;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\..\addons\library.xbmc.addon;..\..\..\..\..\addons\library.xbmc.pvr;..\..\..\..\addons\include;..\..\;..\..\tsreader;..\..\lib\live555\liveMedia\include;..\..\lib\live555\BasicUsageEnvironment\include;..\..\lib\live555\UsageEnvironment\include;..\..\lib\live555\groupsock\include;..\..\..\..\..\lib;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TARGET_WINDOWS;_WINSOCKAPI_;_DEBUG;_USE_32BIT_TIME_T;LIVE555;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -88,9 +86,9 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\..\addons\library.xbmc.addon;..\..\..\..\..\addons\library.xbmc.pvr;..\..\..\..\addons\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;_WINDOWS;MPTV_EXPORTS;TARGET_WINDOWS;_WINSOCKAPI_;_USE_32BIT_TIME_T;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\..\..\addons\library.xbmc.addon;..\..\..\..\..\addons\library.xbmc.pvr;..\..\..\..\addons\include;..\..\tsreader;..\..\lib\live555\liveMedia\include;..\..\lib\live555\BasicUsageEnvironment\include;..\..\lib\live555\UsageEnvironment\include;..\..\lib\live555\groupsock\include;..\..\..\..\..\lib;..\..\..\..\;..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TARGET_WINDOWS;_WINSOCKAPI_;_USE_32BIT_TIME_T;LIVE555;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -98,6 +96,7 @@
       </PrecompiledHeader>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -125,10 +124,15 @@
     <ClCompile Include="..\..\..\..\..\lib\platform\windows\os-threads.cpp" />
     <ClCompile Include="..\..\epg.cpp" />
     <ClCompile Include="..\..\GenreTable.cpp" />
-    <ClCompile Include="..\..\lib\tinyxml\tinystr.cpp" />
-    <ClCompile Include="..\..\lib\tinyxml\tinyxml.cpp" />
-    <ClCompile Include="..\..\lib\tinyxml\tinyxmlerror.cpp" />
-    <ClCompile Include="..\..\lib\tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="..\..\lib\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="..\..\lib\tsreader\FileReader.cpp" />
+    <ClCompile Include="..\..\lib\tsreader\MemoryBuffer.cpp" />
+    <ClCompile Include="..\..\lib\tsreader\MemoryReader.cpp" />
+    <ClCompile Include="..\..\lib\tsreader\MemorySink.cpp" />
+    <ClCompile Include="..\..\lib\tsreader\MepoRTSPClient.cpp" />
+    <ClCompile Include="..\..\lib\tsreader\MultiFileReader.cpp" />
+    <ClCompile Include="..\..\lib\tsreader\TSReader.cpp" />
+    <ClCompile Include="..\..\lib\tsreader\windows\File.cpp" />
     <ClCompile Include="..\..\pvrclient-mediaportal.cpp" />
     <ClCompile Include="..\..\recordings.cpp" />
     <ClCompile Include="..\..\Socket.cpp" />
@@ -145,10 +149,17 @@
     <ClInclude Include="..\..\..\..\..\addons\library.xbmc.addon\dlfcn-win32.h" />
     <ClInclude Include="..\..\epg.h" />
     <ClInclude Include="..\..\FileUtils.h" />
-    <ClInclude Include="..\..\lib\tinyxml\tinystr.h" />
-    <ClInclude Include="..\..\lib\tinyxml\tinyxml.h" />
+    <ClInclude Include="..\..\GenreTable.h" />
+    <ClInclude Include="..\..\lib\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="..\..\lib\tsreader\File.h" />
+    <ClInclude Include="..\..\lib\tsreader\FileReader.h" />
+    <ClInclude Include="..\..\lib\tsreader\MemoryBuffer.h" />
+    <ClInclude Include="..\..\lib\tsreader\MemoryReader.h" />
+    <ClInclude Include="..\..\lib\tsreader\MemorySink.h" />
+    <ClInclude Include="..\..\lib\tsreader\MepoRTSPClient.h" />
+    <ClInclude Include="..\..\lib\tsreader\MultiFileReader.h" />
+    <ClInclude Include="..\..\lib\tsreader\TSReader.h" />
     <ClInclude Include="..\..\os-dependent.h" />
-    <ClInclude Include="..\..\posix\os_posix.h" />
     <ClInclude Include="..\..\pvrclient-mediaportal.h" />
     <ClInclude Include="..\..\recordings.h" />
     <ClInclude Include="..\..\Socket.h" />
@@ -160,6 +171,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\README" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\live555\LiveMedia555.vcxproj">
+      <Project>{3c398bd4-5714-4802-ab86-d43add15b3c0}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

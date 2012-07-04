@@ -200,6 +200,7 @@ CFileItem::CFileItem(const CPVRChannel& channel)
   *GetPVRChannelInfoTag() = channel;
   SetLabel(channel.ChannelName());
   m_strLabel2 = bHasEpgNow ? epgNow.Title() : g_localizeStrings.Get(19055);
+  SetMimeType(channel.InputFormat());
 
   if (channel.IsRadio() && bHasEpgNow)
   {

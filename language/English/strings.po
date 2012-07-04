@@ -6478,7 +6478,7 @@ msgctxt "#19105"
 msgid "Size:"
 msgstr ""
 
-msgctxt "#19106"			
+msgctxt "#19106"
 msgid "Next timer on"
 msgstr ""
 

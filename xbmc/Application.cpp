@@ -28,7 +28,6 @@
 #include "input/KeyboardLayoutConfiguration.h"
 #include "LangInfo.h"
 #include "Util.h"
-#include "pictures/Picture.h"
 #include "guilib/TextureManager.h"
 #include "cores/dvdplayer/DVDFileInfo.h"
 #include "cores/AudioEngine/AEFactory.h"
@@ -1809,6 +1808,21 @@ void CApplication::LoadSkin(const SkinPtr& skin)
     return ;
   }
 
+  skin->Start();
+  if (!skin->HasSkinFile("Home.xml"))
+  {
+    // failed to find home.xml
+    // fallback to default skin
+    if (strcmpi(skin->ID().c_str(), DEFAULT_SKIN) != 0)
+    {
+      CLog::Log(LOGERROR, "home.xml doesn't exist in skin: %s, fallback to \"%s\" skin", skin->ID().c_str(), DEFAULT_SKIN);
+      g_guiSettings.SetString("lookandfeel.skin", DEFAULT_SKIN);
+      LoadSkin(DEFAULT_SKIN);
+      CGUIDialogKaiToast::QueueNotification(CGUIDialogKaiToast::Error, g_localizeStrings.Get(24102), g_localizeStrings.Get(24103));
+      return ;
+    }
+  }
+
   bool bPreviousPlayingState=false;
   bool bPreviousRenderingState=false;
   if (g_application.m_pPlayer && g_application.IsPlayingVideo())
@@ -1874,19 +1888,6 @@ void CApplication::LoadSkin(const SkinPtr& skin)
   start = CurrentHostCounter();
 
   CLog::Log(LOGINFO, "  load new skin...");
-  CGUIWindowHome *pHome = (CGUIWindowHome *)g_windowManager.GetWindow(WINDOW_HOME);
-  if (!pHome || !pHome->Load("Home.xml"))
-  {
-    // failed to load home.xml
-    // fallback to default skin
-    if ( strcmpi(skin->ID().c_str(), DEFAULT_SKIN) != 0)
-    {
-      CLog::Log(LOGERROR, "failed to load home.xml for skin: %s, fallback to \"%s\" skin", skin->ID().c_str(), DEFAULT_SKIN);
-      g_guiSettings.SetString("lookandfeel.skin", DEFAULT_SKIN);
-      LoadSkin(DEFAULT_SKIN);
-      return ;
-    }
-  }
 
   // Load the user windows
   LoadUserWindows();
@@ -2308,7 +2309,7 @@ bool CApplication::OnKey(const CKey& key)
   ResetScreenSaver();
 
   // allow some keys to be processed while the screensaver is active
-  if (WakeUpScreenSaverAndDPMS() && !processKey)
+  if (WakeUpScreenSaverAndDPMS(processKey) && !processKey)
   {
     CLog::Log(LOGDEBUG, "%s: %s pressed, screen saver/dpms woken up", __FUNCTION__, g_Keyboard.GetKeyName((int) key.GetButtonCode()).c_str());
     return true;
@@ -4522,7 +4523,7 @@ bool CApplication::ToggleDPMS(bool manual)
   return false;
 }
 
-bool CApplication::WakeUpScreenSaverAndDPMS()
+bool CApplication::WakeUpScreenSaverAndDPMS(bool bPowerOffKeyPressed /* = false */)
 {
 
 #ifdef HAS_LCD
@@ -4540,13 +4541,13 @@ bool CApplication::WakeUpScreenSaverAndDPMS()
     // (DPMS came first), activate screensaver now.
     ToggleDPMS(false);
     ResetScreenSaverTimer();
-    return !m_bScreenSave || WakeUpScreenSaver();
+    return !m_bScreenSave || WakeUpScreenSaver(bPowerOffKeyPressed);
   }
   else
-    return WakeUpScreenSaver();
+    return WakeUpScreenSaver(bPowerOffKeyPressed);
 }
 
-bool CApplication::WakeUpScreenSaver()
+bool CApplication::WakeUpScreenSaver(bool bPowerOffKeyPressed /* = false */)
 {
   if (m_iScreenSaveLock == 2)
     return false;
@@ -4575,7 +4576,9 @@ bool CApplication::WakeUpScreenSaver()
     m_iScreenSaveLock = 0;
     ResetScreenSaverTimer();
 
-    CAnnouncementManager::Announce(GUI, "xbmc", "OnScreensaverDeactivated");
+    // allow listeners to ignore the deactivation if it preceeds a powerdown/suspend etc
+    CVariant data(bPowerOffKeyPressed);
+    CAnnouncementManager::Announce(GUI, "xbmc", "OnScreensaverDeactivated", data);
 
     if (m_screenSaver->ID() == "visualization")
     {

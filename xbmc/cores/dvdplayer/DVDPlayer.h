@@ -74,13 +74,11 @@ public:
   const int        player;
   // stuff to handle starting after seek
   double   startpts;
-  CDVDMsg* startsync;
 
   CCurrentStream(StreamType t, int i)
     : type(t)
     , player(i)
   {
-    startsync = NULL;
     Clear();
   }
 
@@ -94,9 +92,6 @@ public:
     stream = NULL;
     inited = false;
     started = false;
-    if(startsync)
-      startsync->Release();
-    startsync = NULL;
     startpts  = DVD_NOPTS_VALUE;
   }
 
@@ -317,8 +312,8 @@ protected:
   void HandlePlaySpeed();
   bool IsInMenu() const;
 
-  void SynchronizePlayers(DWORD sources);
-  void SynchronizeDemuxer(DWORD timeout);
+  void SynchronizePlayers(unsigned int sources);
+  void SynchronizeDemuxer(unsigned int timeout);
   void CheckAutoSceneSkip();
   void CheckContinuity(CCurrentStream& current, DemuxPacket* pPacket);
   bool CheckSceneSkip(CCurrentStream& current);

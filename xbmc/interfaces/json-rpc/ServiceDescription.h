@@ -2077,7 +2077,9 @@ namespace JSONRPC
         "{ \"name\": \"top250\", \"$ref\": \"Optional.Integer\" },"
         "{ \"name\": \"sorttitle\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"set\", \"type\": [ \"null\", { \"$ref\": \"Array.String\", \"required\": true } ], \"default\": null },"
-        "{ \"name\": \"showlink\", \"type\": [ \"null\", { \"$ref\": \"Array.String\", \"required\": true } ], \"default\": null }"
+        "{ \"name\": \"showlink\", \"type\": [ \"null\", { \"$ref\": \"Array.String\", \"required\": true } ], \"default\": null },"
+        "{ \"name\": \"thumbnail\", \"$ref\": \"Optional.String\" },"
+        "{ \"name\": \"fanart\", \"$ref\": \"Optional.String\" }"
       "],"
       "\"returns\": \"string\""
     "}",
@@ -2102,7 +2104,9 @@ namespace JSONRPC
         "{ \"name\": \"lastplayed\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"originaltitle\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"sorttitle\", \"$ref\": \"Optional.String\" },"
-        "{ \"name\": \"episodeguide\", \"$ref\": \"Optional.String\" }"
+        "{ \"name\": \"episodeguide\", \"$ref\": \"Optional.String\" },"
+        "{ \"name\": \"thumbnail\", \"$ref\": \"Optional.String\" },"
+        "{ \"name\": \"fanart\", \"$ref\": \"Optional.String\" }"
       "],"
       "\"returns\": \"string\""
     "}",
@@ -2126,7 +2130,9 @@ namespace JSONRPC
         "{ \"name\": \"productioncode\", \"$ref\": \"Optional.String\" },"
         "{ \"name\": \"season\", \"$ref\": \"Optional.Integer\" },"
         "{ \"name\": \"episode\", \"$ref\": \"Optional.Integer\" },"
-        "{ \"name\": \"originaltitle\", \"$ref\": \"Optional.String\" }"
+        "{ \"name\": \"originaltitle\", \"$ref\": \"Optional.String\" },"
+        "{ \"name\": \"thumbnail\", \"$ref\": \"Optional.String\" },"
+        "{ \"name\": \"fanart\", \"$ref\": \"Optional.String\" }"
       "],"
       "\"returns\": \"string\""
     "}",
@@ -2148,7 +2154,9 @@ namespace JSONRPC
         "{ \"name\": \"artist\", \"type\": [ \"null\", { \"$ref\": \"Array.String\", \"required\": true } ] },"
         "{ \"name\": \"genre\", \"type\": [ \"null\", { \"$ref\": \"Array.String\", \"required\": true } ], \"default\": null },"
         "{ \"name\": \"track\", \"$ref\": \"Optional.Integer\" },"
-        "{ \"name\": \"lastplayed\", \"$ref\": \"Optional.String\" }"
+        "{ \"name\": \"lastplayed\", \"$ref\": \"Optional.String\" },"
+        "{ \"name\": \"thumbnail\", \"$ref\": \"Optional.String\" },"
+        "{ \"name\": \"fanart\", \"$ref\": \"Optional.String\" }"
       "],"
       "\"returns\": \"string\""
     "}",

@@ -198,6 +198,8 @@ const infomap player_labels[] =  {{ "hasmedia",         PLAYER_HAS_MEDIA },     
                                   { "folderpath",       PLAYER_PATH },
                                   { "filenameandpath",  PLAYER_FILEPATH }};
 
+const infomap player_param[] =   {{ "property",         PLAYER_ITEM_PROPERTY }};
+
 const infomap player_times[] =   {{ "seektime",         PLAYER_SEEKTIME },
                                   { "seekoffset",       PLAYER_SEEKOFFSET },
                                   { "timeremaining",    PLAYER_TIME_REMAINING },
@@ -775,6 +777,14 @@ int CGUIInfoManager::TranslateSingleString(const CStdString &strCondition)
       {
         if (prop.name == player_times[i].str)
           return AddMultiInfo(GUIInfo(player_times[i].val, TranslateTimeFormat(prop.param())));
+      }
+      if (prop.num_params() == 1)
+      {
+        for (size_t i = 0; i < sizeof(player_param) / sizeof(infomap); i++)
+        {
+          if (prop.name == player_param[i].str)
+            return AddMultiInfo(GUIInfo(player_param[i].val, ConditionalStringParameter(prop.param())));
+        }
       }
     }
     else if (cat.name == "weather")
@@ -2916,6 +2926,10 @@ CStdString CGUIInfoManager::GetMultiInfoLabel(const GUIInfo &info, int contextWi
     if (m_seekOffset > 0)
       return "+" + seekOffset;
   }
+  else if (info.m_info == PLAYER_ITEM_PROPERTY)
+  {
+    return m_currentFile->GetProperty(m_stringParameters[info.GetData1()]).asString();
+  }
   else if (info.m_info == SYSTEM_TIME)
   {
     return GetTime((TIME_FORMAT)info.GetData1());
@@ -2999,11 +3013,15 @@ CStdString CGUIInfoManager::GetMultiInfoLabel(const GUIInfo &info, int contextWi
   else if (info.m_info == SYSTEM_ADDON_TITLE ||
            info.m_info == SYSTEM_ADDON_ICON)
   {
+    // This logic does not check/care whether an addon has been disabled/marked as broken,
+    // it simply retrieves it's name or icon that means if an addon is placed on the home screen it
+    // will stay there even if it's disabled/marked as broken. This might need to be changed/fixed
+    // in the future.
     AddonPtr addon;
     if (info.GetData2() == 0)
-      CAddonMgr::Get().GetAddon(const_cast<CGUIInfoManager*>(this)->GetLabel(info.GetData1(), contextWindow),addon);
+      CAddonMgr::Get().GetAddon(const_cast<CGUIInfoManager*>(this)->GetLabel(info.GetData1(), contextWindow),addon,ADDON_UNKNOWN,false);
     else
-      CAddonMgr::Get().GetAddon(m_stringParameters[info.GetData1()],addon);
+      CAddonMgr::Get().GetAddon(m_stringParameters[info.GetData1()],addon,ADDON_UNKNOWN,false);
     if (addon && info.m_info == SYSTEM_ADDON_TITLE)
       return addon->Name();
     if (addon && info.m_info == SYSTEM_ADDON_ICON)

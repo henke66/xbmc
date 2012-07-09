@@ -199,9 +199,17 @@ bool CVideoThumbLoader::LoadItem(CFileItem* pItem)
   m_database->Open();
 
   // resume point
-  if (pItem->HasVideoInfoTag() && pItem->GetVideoInfoTag()->m_resumePoint.totalTimeInSeconds == 0)
+  if (pItem->HasVideoInfoTag() &&
+      pItem->GetVideoInfoTag()->m_resumePoint.type != CBookmark::RESUME && pItem->GetVideoInfoTag()->m_resumePoint.totalTimeInSeconds == 0)
   {
     if (m_database->GetResumePoint(*pItem->GetVideoInfoTag()))
+      pItem->SetInvalid();
+  }
+
+  if (pItem->HasVideoInfoTag() && !pItem->GetVideoInfoTag()->HasStreamDetails() &&
+     (pItem->GetVideoInfoTag()->m_type == "movie" || pItem->GetVideoInfoTag()->m_type == "episode" || pItem->GetVideoInfoTag()->m_type == "musicvideo"))
+  {
+    if (m_database->GetStreamDetails(*pItem->GetVideoInfoTag()))
       pItem->SetInvalid();
   }
 
@@ -380,9 +388,15 @@ bool CVideoThumbLoader::FillLibraryArt(CFileItem *pItem)
     // For episodes and seasons, we want to set fanart for that of the show
     if (!pItem->HasProperty("fanart_image") && tag.m_iIdShow >= 0)
     {
-      string fanart = m_database->GetArtForItem(tag.m_iIdShow, "tvshow", "fanart");
-      if (!fanart.empty())
-        pItem->SetProperty("fanart_image", fanart);
+      map<string, string> showArt;
+      if (m_database->GetArtForItem(tag.m_iIdShow, "tvshow", showArt))
+      {
+        map<string, string>::iterator i = showArt.find("fanart");
+        if (i != showArt.end())
+          pItem->SetProperty("fanart_image", i->second);
+        if ((i = showArt.find("thumb")) != showArt.end())
+          pItem->SetProperty("tvshowthumb", i->second);
+      }
     }
     m_database->Close();
   }

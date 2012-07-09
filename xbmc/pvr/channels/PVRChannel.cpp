@@ -105,7 +105,7 @@ CPVRChannel::CPVRChannel(const PVR_CHANNEL &channel, unsigned int iClientId)
   m_strFileNameAndPath      = StringUtils::EmptyString;
   m_bIsVirtual              = false;
   m_iLastWatched            = 0;
-  m_bEPGEnabled             = true;
+  m_bEPGEnabled             = !channel.bIsHidden;
   m_strEPGScraper           = "client";
   m_iEpgId                  = -1;
   m_bEPGCreated             = false;
@@ -755,6 +755,15 @@ bool CPVRChannel::GetEPGNow(CEpgInfoTag &tag) const
 {
   CEpg *epg = GetEPG();
   return epg ? epg->InfoTagNow(tag) : false;
+}
+
+bool CPVRChannel::GetEPGTag(EPG::CEpgInfoTag &tag, const CDateTime &time) const
+{
+  CEpg *epg = GetEPG();
+  const EPG::CEpgInfoTag *newTag = epg ? epg->GetTagAround(time) : NULL;
+  if (newTag)
+    tag = *newTag;
+  return newTag != NULL;
 }
 
 bool CPVRChannel::GetEPGNext(CEpgInfoTag &tag) const
